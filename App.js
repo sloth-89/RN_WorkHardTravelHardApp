@@ -1,6 +1,7 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
 import {
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -16,6 +17,7 @@ import ThemeContext from "./ThemeContext";
 import SwitchButton from "./SwichButton";
 import { themeWork } from "./colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Fontisto } from "@expo/vector-icons";
 
 const STORAGE_KEY = "@toDOs";
 
@@ -74,6 +76,24 @@ export default function App() {
 
   // 오브젝트를 합쳐주는 함수
   // Object.assign({}, toDos, {[Date.now()]:{work:true}})
+
+  const deleteToDo = async (key) => {
+    // 아래처럼 alert를 만들어서 창을 띄어줄 수 있다.
+    Alert.alert("Delete To Do", "Are you sure?", [
+      { text: "Cancel" },
+      {
+        text: "I'm sure",
+        onPress: () => {
+          const newToDos = { ...toDos };
+          delete newToDos[key];
+          setToDos(newToDos);
+          saveToDos(newToDos);
+        },
+      },
+      // sure에만 onPress를 넣어줌으로 상호작용은 저기에만 일어난다.
+    ]);
+    return;
+  };
 
   return (
     <ThemeContext.Provider value={themeDate}>
@@ -156,8 +176,11 @@ export default function App() {
             {/* 오브젝트에 키를 찾아 오브젝트의 내용을 가져온다 */}
             {Object.keys(toDos).map((key) =>
               toDos[key].working === working ? (
-                <View style={styles.toDos} key={key}>
+                <View style={styles.toDo} key={key}>
                   <Text style={styles.toDoText}>{toDos[key].text}</Text>
+                  <TouchableOpacity onPress={() => deleteToDo(key)}>
+                    <Fontisto name="trash" size={18} color={themeWork.grey} />
+                  </TouchableOpacity>
                 </View>
               ) : null
             )}
@@ -192,12 +215,15 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     fontSize: 18,
   },
-  toDos: {
+  toDo: {
     backgroundColor: themeWork.toDoBg,
     marginBottom: 10,
     paddingVertical: 20,
     paddingHorizontal: 20,
     borderRadius: 15,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   toDoText: {
     color: "white",
