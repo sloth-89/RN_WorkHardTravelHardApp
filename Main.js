@@ -8,13 +8,13 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  useColorScheme,
 } from "react-native";
 import { useEffect, useState } from "react";
 import SwitchButton from "./SwichButton";
 import { themeWork } from "./colors";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Fontisto } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 import { useTheme } from "@react-navigation/native";
 
 const STORAGE_KEY = "@toDOs";
@@ -34,6 +34,9 @@ export default function Main() {
   const [text, setText] = useState("");
   // input에 적히는 값들을 onChangeText 라는 변수에 담는다.
   const onChangeText = (payload) => setText(payload);
+
+  // todo 체크 상태 관리
+  const [checked, setChecked] = useState(true);
 
   // async 스토리지
   const saveToDos = async (toSave) => {
@@ -200,6 +203,9 @@ export default function Main() {
                 >
                   {toDos[key].text}
                 </Text>
+                <TouchableOpacity>
+                  <FontAwesome name="edit" size={20} color={themeWork.grey} />
+                </TouchableOpacity>
                 <View style={styles.icon}>
                   <TouchableOpacity onPress={() => checkToDo(key)}>
                     <Fontisto
